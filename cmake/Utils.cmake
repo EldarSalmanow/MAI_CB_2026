@@ -38,7 +38,7 @@ function(add_task LAB_NUM TASK_NUM)
     foreach(SOURCE ${ARG_LIB_SOURCES})
         list(APPEND
                 TASK${TASK_NUM}_LIB_SOURCES
-                ${SOURCE_DIR}/task${TASK_NUM}/${SOURCE}
+                ${SOURCE_DIR}/${SOURCE}
         )
     endforeach()
 

@@ -1,14 +1,19 @@
 #include <gtest/gtest.h>
-#include <vector>
-#include <cstdint>
-#include <stdexcept>
 
 #include <lab1/utils.h>
 
+#include <array>
+#include <stdexcept>
+
+
 class PermuteBitsTest : public ::testing::Test {
 protected:
-    void ExpectVectorsEqual(const std::vector<uint8_t>& expected, const std::vector<uint8_t>& actual) {
+    auto ExpectEqual(
+        std::span<std::uint8_t> expected,
+        std::span<std::uint8_t> actual
+    ) -> void {
         ASSERT_EQ(expected.size(), actual.size()) << "Размеры массивов не совпадают!";
+
         for (size_t i = 0; i < expected.size(); ++i) {
             EXPECT_EQ(expected[i], actual[i]) << "Несовпадение в байте по индексу " << i;
         }
@@ -18,8 +23,9 @@ protected:
 TEST_F(PermuteBitsTest, EmptyInputYieldsEmptyOutput) {
     std::vector<uint8_t> empty_bytes;
     std::vector<uint64_t> empty_p_block;
-    
-    auto result = PermuteBits(empty_bytes, empty_p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased);
+
+    std::array<std::uint8_t, 0> result;
+    PermuteBits(empty_bytes, empty_p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased, result);
 
     EXPECT_TRUE(result.empty());
 }
@@ -39,41 +45,45 @@ TEST_F(PermuteBitsTest, LsbZeroBased_CrossBytePermutation) {
         8, 9, 10, 11, 12, 13, 14, 15,
         0, 1, 2,  3,  4,  5,  6,  7
     };
-    
-    auto result = PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased);
+
+    std::array<std::uint8_t, 2> result = {0};
+    PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased, result);
 
     std::vector<uint8_t> expected = { 0xF0, 0x0F };
-    ExpectVectorsEqual(expected, result);
+    ExpectEqual(expected, result);
 }
 
 TEST_F(PermuteBitsTest, GlobalMsbOneBased_Extraction) {
-    std::vector<uint8_t> input = { 0x01, 0x80 };
-    std::vector<uint64_t> p_block = { 1, 16 };
+    std::vector<uint8_t> input = { 0x01, 0x80 }; // 0000 0001 1000 0000
+    std::vector<uint64_t> p_block = { 8, 9 };
 
-    auto result = PermuteBits(input, p_block, BitOrder::MsbToLsb, IndexBase::OneBased);
+    std::array<std::uint8_t, 1> result = {0};
+    PermuteBits(input, p_block, BitOrder::MsbToLsb, IndexBase::OneBased, result);
 
-    std::vector<uint8_t> expected = { 0x03 };
-    ExpectVectorsEqual(expected, result);
+    std::vector<uint8_t> expected = { 0xC0 }; // 1100 0000
+    ExpectEqual(expected, result);
 }
 
 TEST_F(PermuteBitsTest, Expansion_DuplicatesBits) {
     std::vector<uint8_t> input = { 0x01 };
     std::vector<uint64_t> p_block(16, 0);
-    
-    auto result = PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased);
+
+    std::array<std::uint8_t, 2> result = {0};
+    PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased, result);
 
     std::vector<uint8_t> expected = { 0xFF, 0xFF };
-    ExpectVectorsEqual(expected, result);
+    ExpectEqual(expected, result);
 }
 
 TEST_F(PermuteBitsTest, Compression_NonMultipleOfEight) {
     std::vector<uint8_t> input = { 0xFF, 0xFF };
     std::vector<uint64_t> p_block = { 0, 1, 2 };
-    
-    auto result = PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased);
+
+    std::array<std::uint8_t, 1> result = {0};
+    PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased, result);
 
     std::vector<uint8_t> expected = { 0x07 };
-    ExpectVectorsEqual(expected, result);
+    ExpectEqual(expected, result);
 }
 
 TEST_F(PermuteBitsTest, Stress_LeftShiftByteArray) {
@@ -84,8 +94,9 @@ TEST_F(PermuteBitsTest, Stress_LeftShiftByteArray) {
         p_block.push_back(i);
     }
     p_block.push_back(0);
-    
-    auto result = PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased);
+
+    std::array<std::uint8_t, 4> result = {0};
+    PermuteBits(input, p_block, BitOrder::LsbToMsb, IndexBase::ZeroBased, result);
 
     ASSERT_EQ(4, result.size());
 }

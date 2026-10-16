@@ -4,6 +4,10 @@ project(MAI_CB_2026)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(args REQUIRED)
+
+include_directories(${args_INCLUDE_DIRS})
+
 include(cmake/Utils.cmake)
 setup_project()
 
