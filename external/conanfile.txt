@@ -1,0 +1,6 @@
+[requires]
+taywee-args/6.4.6
+
+[generators]
+CMakeDeps
+CMakeToolchain

@@ -4,6 +4,10 @@
 # Build files & directories
 cmake-build-*/
 
+# External files
+external/*
+!external/conanfile.txt
+
 # Prerequisites
 *.d
 
