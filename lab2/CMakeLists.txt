@@ -26,6 +26,6 @@ add_task(2 3
 
 add_task(2 4
         CLI_SOURCES task4.cpp
-        LIB_SOURCES math.cpp
+        LIB_SOURCES math.cpp primality_test.cpp rsa.cpp wiener_attack.cpp
         TEST_SOURCES task4_test.cpp
 )
