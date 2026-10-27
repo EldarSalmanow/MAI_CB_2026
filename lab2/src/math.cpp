@@ -1,7 +1,21 @@
 #include <lab2/math.h>
 
-#include <numbers>
+#include <boost/random/uniform_int_distribution.hpp>
 
+#include <numbers>
+#include <random>
+
+
+namespace {
+
+    auto GetPRNG() -> std::mt19937_64 & {
+        thread_local static std::random_device device;
+        thread_local static std::mt19937_64 generator(device());
+
+        return generator;
+    }
+
+}
 
 namespace crypto::math {
 
@@ -278,8 +292,30 @@ namespace crypto::math {
         return !(n & 1);
     }
 
-}
+    auto GenerateRandomInRange(
+        const BigInt &min,
+        const BigInt &max
+    ) -> BigInt {
+        boost::random::uniform_int_distribution<BigInt> distribution(min, max);
 
-void t() {
-    auto r = crypto::math::GCD<crypto::math::detail::GCDExtendedEuclidianImpl>(1, 103);
+        return distribution(GetPRNG());
+    }
+
+    auto GenerateRandomOddWithBitLength(
+        std::size_t bits
+    ) -> BigInt {
+        if (bits < 2) {
+            return 1;
+        }
+
+        const auto min_val = BigInt(1) << (bits - 1);
+        const auto max_val = (BigInt(1) << bits) - 1;
+
+        auto result = GenerateRandomInRange(min_val, max_val);
+
+        result |= 1;
+
+        return result;
+    }
+
 }
