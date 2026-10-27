@@ -87,7 +87,7 @@ namespace crypto::primality {
     auto MillerRabinTest::RunSingleIteration(
         const BigInt &number
     ) const -> bool {
-        BigInt d = number - 1, s = 1;
+        BigInt d = number - 1, s = 0;
 
         while (math::IsEven(d)) {
             d >>= 1;

@@ -20,7 +20,7 @@ add_task(2 2
 
 add_task(2 3
         CLI_SOURCES task3.cpp
-        LIB_SOURCES math.cpp
+        LIB_SOURCES math.cpp primality_test.cpp rsa.cpp
         TEST_SOURCES task3_test.cpp
 )
 
