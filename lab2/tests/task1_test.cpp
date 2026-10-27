@@ -5,6 +5,7 @@
 #include <string>
 
 
+using namespace crypto;
 using namespace crypto::math;
 using namespace crypto::math::detail;
 
@@ -174,4 +175,41 @@ TEST(CryptoMathTest, IsEven) {
     // Проверка с большими числами
     EXPECT_TRUE(IsEven(BigInt("12345678901234567890")));
     EXPECT_FALSE(IsEven(BigInt("12345678901234567891")));
+}
+
+// ==============================================================================
+// Тесты для генерации случайных чисел
+// ==============================================================================
+
+TEST(CryptoMathTest, GenerateRandomInRange) {
+    BigInt min("100000000000000000000");
+    BigInt max("999999999999999999999");
+
+    // Проверяем несколько раз, чтобы убедиться в стабильности генерации
+    for (int i = 0; i < 50; ++i) {
+        BigInt rand_val = GenerateRandomInRange(min, max);
+        EXPECT_GE(rand_val, min) << "Random value is less than minimum!";
+        EXPECT_LE(rand_val, max) << "Random value is greater than maximum!";
+    }
+
+    // Пограничный случай: диапазон из одного числа
+    BigInt single_val(42);
+    EXPECT_EQ(GenerateRandomInRange(single_val, single_val), single_val);
+}
+
+TEST(CryptoMathRandomTest, GenerateRandomOddWithBitLength) {
+    std::vector<std::size_t> bit_lengths = {8, 16, 64, 128, 512, 1024};
+
+    for (std::size_t bits : bit_lengths) {
+        BigInt rand_val = GenerateRandomOddWithBitLength(bits);
+
+        // 1. Проверка на нечетность (младший бит равен 1)
+        EXPECT_FALSE(IsEven(rand_val)) << "Generated number is not odd!";
+
+        // 2. Проверка битовой длины.
+        // Функция msb() возвращает индекс старшего установленного бита (начиная с 0).
+        // Поэтому битовая длина равна msb(rand_val) + 1.
+        std::size_t actual_bits = boost::multiprecision::msb(rand_val) + 1;
+        EXPECT_EQ(actual_bits, bits) << "Generated number has incorrect bit length!";
+    }
 }

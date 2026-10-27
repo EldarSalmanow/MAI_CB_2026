@@ -4,9 +4,13 @@
 #include <boost/multiprecision/cpp_int.hpp>
 
 
-namespace crypto::math {
+namespace crypto {
 
     using BigInt = boost::multiprecision::cpp_int;
+
+}
+
+namespace crypto::math {
 
     namespace detail {
 
@@ -109,6 +113,15 @@ namespace crypto::math {
     auto IsEven(
         const BigInt &n
     ) -> bool;
+
+    auto GenerateRandomInRange(
+        const BigInt &min,
+        const BigInt &max
+    ) -> BigInt;
+
+    auto GenerateRandomOddWithBitLength(
+        std::size_t bits
+    ) -> BigInt;
 
 }
 
