@@ -238,11 +238,12 @@ namespace crypto::math {
 
         BigInt temp = n, result = 1;
 
-        if (temp % 2 == 0) {
+        if (IsEven(temp)) {
             std::size_t k = 0;
 
-            while (temp % 2 == 0) {
-                temp /= 2;
+            while (IsEven(temp)) {
+                // temp /= 2;
+                temp >>= 1;
 
                 ++k;
             }
