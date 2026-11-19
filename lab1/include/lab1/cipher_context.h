@@ -24,8 +24,9 @@ public:
         std::span<const std::uint8_t> key,
         const CipherMode mode,
         const PaddingMode padding,
-        const CipherParams &params = {}
-    ) : cipher_(),
+        const CipherParams &params = {},
+        CipherType cipher = CipherType{}
+    ) : cipher_(std::move(cipher)),
         mode_strategy_(nullptr),
         padding_strategy_(nullptr) {
         if (mode != CipherMode::ECB && params.iv.size() != cipher_.BlockSize()) {

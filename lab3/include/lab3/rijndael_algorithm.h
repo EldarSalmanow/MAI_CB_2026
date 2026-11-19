@@ -1,19 +1,14 @@
 #ifndef MAI_CB_2026_RIJNDAEL_ALGORITHM_H
 #define MAI_CB_2026_RIJNDAEL_ALGORITHM_H
 
-#include <array>
-#include <cstddef>
-#include <cstdint>
-#include <memory>
-#include <mutex>
-#include <span>
-#include <vector>
-
+#include <lab1/block_cipher.h>
+#include <lab1/key_expander.h>
+#include <lab1/round_function.h>
 #include <lab3/galois_field.h>
 
-#include "../../../lab1/include/lab1/block_cipher.h"
-#include "../../../lab1/include/lab1/key_expander.h"
-#include "../../../lab1/include/lab1/round_function.h"
+#include <array>
+#include <mutex>
+
 
 namespace crypto::symmetric {
 
